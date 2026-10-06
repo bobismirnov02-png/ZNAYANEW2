@@ -12,13 +12,46 @@
   
   <link rel="apple-touch-icon" sizes="192x192" href="./assets/znaya-192.png">
   <link rel="manifest" href="./manifest.json">
-  <link rel="stylesheet" href="./app.css?v=public-darktheme">
+  <link rel="stylesheet" href="./app.css?v=public-theme-errorfix">
 
   <style id="znaya-critical-overlays">
     [hidden]{display:none!important}
     .deck-backdrop,.confirm-backdrop{position:fixed;inset:0;z-index:120}
     .confirm-backdrop{z-index:140}
   </style>
+  <style id="znaya-error-display-style">
+    .znaya-error-overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(15,18,26,.30);backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px);z-index:10000}
+    .znaya-error-overlay[hidden]{display:none!important}.znaya-error-box{width:min(590px,calc(100vw - 28px));background:#fff;color:#161922;border-radius:20px;overflow:hidden;box-shadow:0 28px 85px rgba(0,0,0,.26);border:1px solid rgba(0,0,0,.07)}
+    .znaya-error-head{background:#e5a91f;color:#fff;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px}.znaya-error-head-left{display:flex;align-items:center;gap:10px;font-weight:900;letter-spacing:.035em}.znaya-error-icon{width:29px;height:29px;border-radius:999px;background:#fff;display:grid;place-items:center;flex:none;font-size:16px}.znaya-error-title{font-size:14px}.znaya-error-close{border:0;background:transparent;color:#fff;font-size:25px;line-height:1;font-weight:800;cursor:pointer;padding:1px 5px}
+    .znaya-error-body{padding:18px 18px 10px}.znaya-error-message{font-size:15px;font-weight:800;line-height:1.45;margin:0 0 8px}.znaya-error-details{margin:0;padding:11px 12px;border-radius:11px;background:#f5f6f8;color:#555d69;font:12px/1.5 ui-monospace,SFMono-Regular,Consolas,monospace;white-space:pre-wrap;word-break:break-word;max-height:210px;overflow:auto}.znaya-error-time{display:block;color:#8a909b;font-size:11px;margin-top:9px}.znaya-error-actions{display:flex;justify-content:flex-end;gap:8px;padding:12px 18px 18px}.znaya-error-action{border:1px solid #dfe2e7;background:#fff;color:#313641;border-radius:10px;padding:9px 12px;font-weight:750;cursor:pointer}.znaya-error-action.primary{background:#1f2937;border-color:#1f2937;color:#fff}
+    html[data-theme="dark"] .znaya-error-box{background:#181b23;color:#f3f4f7;border-color:#323743}.znaya-error-details{background:#f5f6f8}html[data-theme="dark"] .znaya-error-details{background:#11141a;color:#c7ccd5}.znaya-error-action{background:transparent}html[data-theme="dark"] .znaya-error-action{border-color:#3b414e;color:#e9ebef}.znaya-error-action.primary{background:#f0f1f5;color:#171a21;border-color:#f0f1f5}
+  </style>
+  <script id="znaya-error-display-boot">
+  (()=>{
+    const errors=[];
+    function ensure(){
+      let overlay=document.getElementById('znayaErrorOverlay');
+      if(overlay)return overlay;
+      if(!document.body)return null;
+      overlay=document.createElement('div');overlay.id='znayaErrorOverlay';overlay.className='znaya-error-overlay';overlay.hidden=true;
+      overlay.innerHTML='<div class="znaya-error-box" role="alertdialog" aria-modal="true" aria-labelledby="znayaErrorTitle"><div class="znaya-error-head"><div class="znaya-error-head-left"><span class="znaya-error-icon">⚠️</span><span class="znaya-error-title" id="znayaErrorTitle">ГРЕШКА В ZNAYA</span></div><button type="button" class="znaya-error-close" aria-label="Затвори">×</button></div><div class="znaya-error-body"><p class="znaya-error-message" id="znayaErrorMessage"></p><pre class="znaya-error-details" id="znayaErrorDetails"></pre><span class="znaya-error-time" id="znayaErrorTime"></span></div><div class="znaya-error-actions"><button type="button" class="znaya-error-action" id="znayaErrorCopy">Копирай детайли</button><button type="button" class="znaya-error-action primary" id="znayaErrorOk">Затвори</button></div></div>';
+      document.body.appendChild(overlay);
+      const hide=()=>{overlay.hidden=true};
+      overlay.querySelector('.znaya-error-close').addEventListener('click',hide);document.getElementById('znayaErrorOk').addEventListener('click',hide);overlay.addEventListener('click',e=>{if(e.target===overlay)hide()});
+      document.getElementById('znayaErrorCopy').addEventListener('click',async()=>{const last=errors[errors.length-1];const text=last?`${last.message}\n\n${last.details}\n\n${last.time}`:'ZNAYA error';try{await navigator.clipboard.writeText(text);document.getElementById('znayaErrorCopy').textContent='Копирано ✓';setTimeout(()=>document.getElementById('znayaErrorCopy').textContent='Копирай детайли',1200)}catch{document.getElementById('znayaErrorDetails').focus?.();}});
+      return overlay;
+    }
+    window.showZnayaError=(message,details='')=>{
+      const item={message:String(message||'Възникна грешка.'),details:String(details||'').trim()||'Няма допълнителни технически детайли.',time:new Date().toLocaleString('bg-BG')};errors.push(item);if(errors.length>20)errors.shift();
+      const show=()=>{const overlay=ensure();if(!overlay)return;document.getElementById('znayaErrorMessage').textContent=item.message;document.getElementById('znayaErrorDetails').textContent=item.details;document.getElementById('znayaErrorTime').textContent=`${item.time} · ${location.pathname}${location.hash}`;overlay.hidden=false;requestAnimationFrame(()=>overlay.querySelector('.znaya-error-close')?.focus());};
+      if(document.body)show();else window.addEventListener('DOMContentLoaded',show,{once:true});
+    };
+    window.getZnayaErrors=()=>errors.slice();
+    window.addEventListener('error',e=>{const msg=e?.error?.message||e?.message;if(msg&&!/Script error/i.test(msg))window.showZnayaError('Възникна грешка в приложението.',`${msg}${e.filename?`\n${e.filename}:${e.lineno||0}:${e.colno||0}`:''}`);},true);
+    window.addEventListener('unhandledrejection',e=>{const reason=e?.reason;const msg=typeof reason==='string'?reason:(reason?.message||String(reason||'Необработена грешка.'));if(!/auth_window_closed|cancel/i.test(msg))window.showZnayaError('Операцията не беше завършена.',msg);});
+    document.addEventListener('keydown',e=>{if(e.key==='Escape'){const o=document.getElementById('znayaErrorOverlay');if(o&&!o.hidden)o.hidden=true}});
+  })();
+  </script>
 </head>
 <body>
 <div class="app">
@@ -452,7 +485,7 @@
 <script>
 window.ZNAYAPuterReady=window.ZNAYAPuterReady||new Promise((resolve)=>{const s=document.createElement('script');s.src='https://js.puter.com/v2/';s.async=true;s.onload=()=>resolve(true);s.onerror=()=>resolve(false);document.head.appendChild(s);});
 </script>
-<script src="./znaya-ai.js?v=public-darktheme" defer></script>
-<script src="./app.js?v=public-darktheme" defer></script>
+<script src="./znaya-ai.js?v=public-theme-errorfix" defer></script>
+<script src="./app.js?v=public-theme-errorfix" defer></script>
 </body>
 </html>

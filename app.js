@@ -709,12 +709,13 @@
   document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(document.getElementById('dataConfirmBackdrop').classList.contains('open'))closeDataConfirm();else if(document.getElementById('confirmBackdrop').classList.contains('open'))closeConfirm();else if(document.getElementById('editBackdrop').classList.contains('open'))closeDeckEditor();else if(document.getElementById('deckBackdrop').classList.contains('open'))closeDeckDetail();}});
 
   window.addEventListener('unhandledrejection',e=>{const msg=String(e.reason?.message||e.reason||'');if(msg&&!/auth_window_closed|cancel/i.test(msg)){console.error('ZNAYA unhandled rejection',e.reason);}});
+  initTheme();
+  document.getElementById('themeToggle')?.addEventListener('click',()=>{
+    try{applyTheme(currentTheme()==='dark'?'light':'dark');}
+    catch(err){window.showZnayaError?.('Темата не можа да бъде сменена.',err?.message||String(err));}
+  });
   window.addEventListener('hashchange',()=>setView((location.hash||'#home').slice(1)));
   setView((location.hash||'#home').slice(1));
 })();
-
-
-  initTheme();
-  document.getElementById('themeToggle')?.addEventListener('click',()=>applyTheme(currentTheme()==='dark'?'light':'dark'));
 
 if('serviceWorker' in navigator&&!window.ZNAYA_PREVIEW_MODE){window.addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js').catch(()=>{}));}

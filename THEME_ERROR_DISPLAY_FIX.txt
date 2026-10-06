@@ -1,0 +1,6 @@
+ZNAYA public bug fix
+- Fixed theme toggle initialization: initTheme/themeToggle listener now execute inside the main application scope.
+- Added global ZNAYA error display, loaded before app.js, for runtime JS errors and unhandled promise rejections.
+- Error panel includes technical details, time/path and a copy-details action.
+- Bumped service-worker cache.
+Version label remains ZNAYA 1.0.
