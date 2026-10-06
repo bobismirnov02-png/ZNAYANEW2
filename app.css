@@ -427,3 +427,101 @@ html[data-theme="dark"] .edit-crop img{background:#fff}
 html[data-theme="dark"] .about-brand-card{background:#151821}
 html[data-theme="dark"] select{color-scheme:dark}
 @media(max-width:720px){html[data-theme="dark"] .sidebar{background:rgba(20,22,30,.97)}}
+
+/* ZNAYA public dark-theme surface consistency bug fix */
+html[data-theme="dark"] .detail-stat,
+html[data-theme="dark"] .deck-preview-card,
+html[data-theme="dark"] .finish-stat,
+html[data-theme="dark"] .review-mini-stats article,
+html[data-theme="dark"] .subject-page-summary>div,
+html[data-theme="dark"] .subject-dashboard-stats>div,
+html[data-theme="dark"] .progress-kpis article,
+html[data-theme="dark"] .open-question-note,
+html[data-theme="dark"] .combo-statements>div,
+html[data-theme="dark"] .match-solution-row{
+  background:var(--surface-soft);
+  border-color:var(--line);
+  color:var(--text);
+}
+html[data-theme="dark"] .subject-dashboard-actions button{
+  background:var(--surface-soft);
+  border-color:var(--line);
+  color:var(--text);
+}
+html[data-theme="dark"] .subject-dashboard-actions button:not(:disabled):hover{
+  background:#252936;
+  border-color:var(--line-strong);
+}
+html[data-theme="dark"] .subject-dashboard-actions button.accent{
+  background:var(--primary-faint);
+  border-color:#4b477b;
+  color:#aaaaff;
+}
+html[data-theme="dark"] .study-type-badge{
+  background:var(--primary-faint);
+  border-color:#45436d;
+  color:#aaaaff;
+}
+html[data-theme="dark"] .study-type-badge span{color:#918eae}
+html[data-theme="dark"] .open-question-note{
+  border-style:dashed;
+  color:var(--muted);
+}
+html[data-theme="dark"] .combo-statements>div{color:var(--text)}
+html[data-theme="dark"] .match-key.right{
+  background:#2a2e39;
+  color:#c7ccd6;
+}
+html[data-theme="dark"] .match-solution-row b{color:var(--muted)}
+html[data-theme="dark"] .match-result.needs-work{
+  background:#311d22;
+  border-color:#5a303a;
+  color:#ffd1d8;
+}
+html[data-theme="dark"] .study-match-fallback{
+  background:#282116;
+  border-color:#594725;
+}
+html[data-theme="dark"] .study-match-fallback strong{color:#e3bd7d}
+html[data-theme="dark"] .study-match-fallback p{color:#bba57e}
+html[data-theme="dark"] .attention-callout.success{
+  background:#17362d;
+  border-color:#285543;
+}
+html[data-theme="dark"] .detail-stat strong,
+html[data-theme="dark"] .deck-preview-card strong,
+html[data-theme="dark"] .finish-stat strong,
+html[data-theme="dark"] .review-mini-stats strong,
+html[data-theme="dark"] .subject-page-summary strong,
+html[data-theme="dark"] .subject-dashboard-stats strong,
+html[data-theme="dark"] .progress-kpis strong,
+html[data-theme="dark"] .combo-statements>div{
+  color:var(--text-strong);
+}
+html[data-theme="dark"] .detail-stat span,
+html[data-theme="dark"] .deck-preview-card p,
+html[data-theme="dark"] .finish-stat span,
+html[data-theme="dark"] .review-mini-stats span,
+html[data-theme="dark"] .review-mini-stats small,
+html[data-theme="dark"] .subject-page-summary span,
+html[data-theme="dark"] .subject-dashboard-stats span,
+html[data-theme="dark"] .progress-kpis span,
+html[data-theme="dark"] .progress-kpis small{
+  color:var(--muted);
+}
+html[data-theme="dark"] .activity-bar{background:#484e5c}
+html[data-theme="dark"] .activity-bar.today{background:linear-gradient(180deg,var(--primary-2),var(--primary))}
+html[data-theme="dark"] .review-start:not(:disabled){background:#eceef5;color:#151821}
+html[data-theme="dark"] .review-start:not(:disabled):hover{background:#fff}
+html[data-theme="dark"] .review-start:disabled{background:#565b65;color:#8f949f}
+html[data-theme="dark"] .rate-no{background:var(--surface-soft);border-color:var(--line);color:#d9a8b0}
+html[data-theme="dark"] .study-option:hover{background:#20242f;border-color:var(--line-strong)}
+html[data-theme="dark"] .match-item.correct{background:#17362d;border-color:#285543}
+html[data-theme="dark"] .match-item.wrong{background:#311d22;border-color:#5a303a}
+html[data-theme="dark"] .match-item.active,
+html[data-theme="dark"] .match-item.paired{background:var(--primary-faint);border-color:#5553a0}
+html[data-theme="dark"] .modal-intro{background:var(--primary-faint);border-color:#44416d}
+html[data-theme="dark"] .deck-preview-more{border-color:var(--line-strong);color:var(--muted)}
+html[data-theme="dark"] .settings-switch i{background:#343945}
+html[data-theme="dark"] .settings-switch input:checked+i{background:var(--primary)}
+html[data-theme="dark"] .settings-switch i::after{background:#f5f6fa}
