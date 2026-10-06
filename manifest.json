@@ -1,0 +1,14 @@
+{
+  "name": "ZNAYA",
+  "short_name": "ZNAYA",
+  "description": "От материал до знание.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#FAFAFF",
+  "theme_color": "#FAFAFF",
+  "lang": "bg",
+  "icons": [
+    {"src":"./assets/znaya-192.png","sizes":"192x192","type":"image/png"},
+    {"src":"./assets/znaya-512.png","sizes":"512x512","type":"image/png"}
+  ]
+}

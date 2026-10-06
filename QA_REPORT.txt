@@ -1,0 +1,89 @@
+ZNAYA 1.0 — Release Candidate 1
+Stage 6 QA / Hardening Report
+
+Scope
+- Unified ZNAYA App Shell
+- Home / Create / Library / Study / Review / Subjects / Progress / Settings
+- Persistent Puter credit indicator
+- Desktop and mobile responsive layout
+- Legacy route compatibility
+- Local data / backup flows
+
+Release-candidate changes
+- Puter credits are the only permanently visible AI/provider information.
+- Desktop: remaining credits are shown in the left navigation on every view.
+- Mobile: the same remaining-credit indicator is shown in the top bar because the left navigation becomes a bottom navigation.
+- Removed visible provider/model/API-key controls from Settings.
+- ZNAYA AI uses Puter.js only in this release candidate.
+- Puter usage is read through puter.auth.getMonthlyUsage().
+- Usage is normalized to the familiar 0–1000 display while preserving the account's real remaining allowance ratio.
+
+Automated/static checks
+PASS  package.json parses
+PASS  manifest.json parses
+PASS  service-worker asset list resolves to existing files
+PASS  app.js syntax check
+PASS  znaya-ai.js syntax check
+PASS  server.js syntax check
+PASS  no Gemini/Groq/BYOK provider references remain in production app/server files
+
+HTTP / route checks
+PASS  /api/health
+PASS  /
+PASS  /index.html
+PASS  /app.css
+PASS  /app.js
+PASS  /znaya-ai.js
+PASS  /manifest.json
+PASS  /service-worker.js
+PASS  brand assets
+PASS  legacy subject routes resolve to the unified ZNAYA interface
+PASS  unknown routes return 404
+
+Interactive QA
+PASS  Home loads
+PASS  Puter credit indicator remains visible across all primary views
+PASS  Create flow
+PASS  generated cards can be saved into Library
+PASS  deck detail modal
+PASS  deck edit / save
+PASS  deck duplicate
+PASS  deck delete confirmation
+PASS  Study mode
+PASS  Open question rendering
+PASS  Multiple-choice rendering
+PASS  Yes/No rendering
+PASS  Interactive matching rendering and validation
+PASS  Combination-question rendering
+PASS  Review queue
+PASS  Subjects dashboard
+PASS  Progress dashboard
+PASS  Learning settings
+PASS  Data / backup controls
+PASS  reset-progress confirmation
+PASS  no browser errors during tested flows
+
+Responsive QA
+PASS  desktop layout
+PASS  mobile layout at 390 px
+PASS  no page-level horizontal overflow in tested primary views
+PASS  desktop credit card becomes mobile top-bar credit indicator
+
+Bug fixed during Stage 6
+- The Library "Редактирай" action referenced a missing openDeckEditor() function.
+- The function was restored and the full edit workflow was re-tested successfully.
+
+Puter credit validation
+- Tested usage-ratio conversion with a mocked monthly allowance of 2,000,000 and remaining allowance of 1,611,600.
+- Expected display: 805,8 / 1000.
+- Expected progress: 80.58%.
+- Result: PASS.
+
+Environment note
+- Automated QA validates the Puter integration path and usage conversion, but does not complete a real third-party Puter sign-in on behalf of the user.
+- On deployment, the live remaining-credit value appears after the user is signed into Puter.
+
+Build
+- Product: ZNAYA
+- Version: 1.0.0-rc1
+- Stage: 6 — Release Candidate QA / Hardening

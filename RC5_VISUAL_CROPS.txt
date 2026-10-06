@@ -1,0 +1,8 @@
+ZNAYA 1.0 RC5 — Visual Exercise Crop Update
+
+- Numbered exercise/test images are locally OCR-scanned for question boundaries.
+- Each detected question is cropped from the original image and stored on its card.
+- Study mode displays the original crop as the card front; text remains as fallback.
+- Crop metadata survives Library edit, duplicate, backup and restore.
+- Numbered exercise detection activates only when an image contains at least two question starts.
+- If OCR/crop fails, ZNAYA continues with normal text cards.

@@ -1,0 +1,12 @@
+{
+  "name": "znaya-1.0.0-rc7",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "version": "1.0.0-rc7"
+}

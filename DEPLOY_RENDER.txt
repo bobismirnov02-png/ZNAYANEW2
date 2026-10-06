@@ -1,0 +1,11 @@
+ZNAYA 1.0 — RELEASE CANDIDATE 1 / RENDER DEPLOY
+
+1. Качи съдържанието на този build в проекта си.
+2. Build command: npm install (ако Render го изисква).
+3. Start command: npm start
+4. След deploy отвори сайта и направи Ctrl + F5 при нужда, за да се обнови service-worker кешът.
+5. Провери /api/health — version трябва да бъде 1.0.0-rc5.
+6. Старите адреси /biology, /chemistry, /theory-law, /history-law, /human-action и др. отварят единния ZNAYA app shell.
+7. ZNAYA използва същия localStorage key като BioHim 4.4, затова библиотеката и резултатите се мигрират автоматично.
+8. В „Настройки → Данни“ можеш да изтеглиш backup преди публикуване.
+9. Puter.js е единственият AI доставчик. Потребителят вижда само оставащите Puter кредити в левия sidebar (на мобилно — в горната лента).

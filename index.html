@@ -1,0 +1,453 @@
+<!doctype html>
+<html lang="bg">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#fafaff">
+  <meta name="description" content="ZNAYA">
+  <title>ZNAYA</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="./assets/favicon-32.png?v=6.0.0-rc5">
+  <link rel="icon" type="image/png" sizes="16x16" href="./assets/favicon-16.png?v=6.0.0-rc5">
+  <link rel="shortcut icon" href="./assets/favicon.ico?v=6.0.0-rc5">
+  <link rel="apple-touch-icon" sizes="192x192" href="./assets/znaya-192.png">
+  <link rel="manifest" href="./manifest.json">
+  <link rel="stylesheet" href="./app.css?v=6.3.0-rc8">
+
+  <style id="znaya-critical-overlays">
+    [hidden]{display:none!important}
+    .deck-backdrop,.confirm-backdrop{position:fixed;inset:0;z-index:120}
+    .confirm-backdrop{z-index:140}
+  </style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar" aria-label="Главна навигация">
+    <a class="brand-link" href="#home" aria-label="ZNAYA начало">
+      <img class="brand-lockup" src="./assets/znaya-lockup.png" alt="ZNAYA">
+      <div class="brand-tagline">От материал до знание.</div>
+    </a>
+
+    <nav class="nav-group" id="mainNav">
+      <a class="nav-item active" href="#home" data-view="home" aria-current="page">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3.5 10.7 12 3l8.5 7.7v9a1.3 1.3 0 0 1-1.3 1.3H15v-6H9v6H4.8a1.3 1.3 0 0 1-1.3-1.3z"/></svg>
+        <span class="nav-label">Начало</span>
+      </a>
+      <a class="nav-item" href="#library" data-view="library">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7h8M8 11h8M8 15h5"/></svg>
+        <span class="nav-label">Библиотека</span>
+      </a>
+      <a class="nav-item" href="#review" data-view="review">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 11a8 8 0 1 0-2.4 5.7L21 20"/><path d="M12 7.5V12l3 2"/></svg>
+        <span class="nav-label">Преговор</span>
+      </a>
+      <a class="nav-item" href="#subjects" data-view="subjects">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 19V9M10 19V5M16 19v-7M22 19H2"/></svg>
+        <span class="nav-label">Предмети</span>
+      </a>
+      <a class="nav-item" href="#progress" data-view="progress">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 16l4-4 4 3 6-8"/><path d="M14 7h4v4"/><path d="M4 20h16"/></svg>
+        <span class="nav-label">Напредък</span>
+      </a>
+    </nav>
+
+    <button class="create-main" id="createMain" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+      <span>Създай</span>
+    </button>
+
+    <div class="sidebar-bottom">
+      <button class="puter-credit-card" id="puterCreditCard" type="button" aria-label="Puter кредити">
+        <span class="puter-credit-top">
+          <span class="puter-credit-icon" aria-hidden="true">P</span>
+          <span class="puter-credit-copy"><span>Puter кредити</span><strong id="puterCreditValue">Проверка…</strong></span>
+        </span>
+        <span class="puter-credit-meta" id="puterCreditMeta">Месечен остатък</span>
+        <span class="puter-credit-track" aria-hidden="true"><i id="puterCreditBar"></i></span>
+      </button>
+      <a class="nav-item" href="#settings" data-view="settings">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5v.1h-4v-.1a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3v-4h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.9L4.2 7 7 4.2l.1.1A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-1.5V3h4v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.5 1h.1v4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+        <span class="nav-label">Настройки</span>
+      </a>
+      <div class="sidebar-note">ZNAYA<br>От материал до знание.</div>
+    </div>
+  </aside>
+
+  <div class="main-shell">
+    <main class="main">
+      <div class="topbar">
+        <button class="puter-credit-mobile" id="puterCreditMobile" type="button" aria-label="Puter кредити">
+          <span class="puter-credit-mobile-icon" aria-hidden="true">P</span>
+          <span class="puter-credit-mobile-copy"><span>Puter</span><strong id="puterCreditMobileValue">Проверка…</strong></span>
+        </button>
+        <div class="date-label" id="dateLabel"></div>
+        <div class="top-actions">
+          <button class="icon-button" type="button" id="topSettings" aria-label="Настройки">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5v.1h-4v-.1a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3v-4h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.9L4.2 7 7 4.2l.1.1A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-1.5V3h4v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.5 1h.1v4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <section class="view active" id="view-home" data-view-panel="home">
+        <div class="home-hero">
+          <div class="hero-kicker">Твоето място за учене</div>
+          <h1>Какво ще учиш днес?</h1>
+          <p>Добави материал или напиши тема. ZNAYA ще го превърне в ясен начин за учене.</p>
+
+          <div class="composer">
+            <div class="composer-entry">
+              <div class="composer-spark">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="m12 3 1.6 4.4L18 9l-4.4 1.6L12 15l-1.6-4.4L6 9l4.4-1.6z"/><path d="m19 15 .9 2.1L22 18l-2.1.9L19 21l-.9-2.1L16 18l2.1-.9z"/></svg>
+              </div>
+              <input class="composer-input" id="topicInput" autocomplete="off" placeholder="Напиши тема, урок или глава…">
+            </div>
+            <div class="composer-bar">
+              <button class="tool-button" type="button" id="uploadMaterial">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 16V4M7 9l5-5 5 5M5 20h14"/></svg>
+                Качи материал
+              </button>
+              <button class="tool-button" type="button" id="writeTopic">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 5h16M4 12h16M4 19h10"/></svg>
+                Напиши тема
+              </button>
+              <button class="primary-button" type="button" id="startCreate">Създай</button>
+            </div>
+          </div>
+
+          <div class="subject-suggestions" id="subjectSuggestions"></div>
+        </div>
+
+        <section class="section">
+          <div class="section-head">
+            <div><h2>Продължи ученето</h2><p>Последните ти учебни комплекти.</p></div>
+            <button class="section-link" type="button" data-go="library">Виж библиотеката →</button>
+          </div>
+          <div class="deck-grid" id="continueGrid"></div>
+          <div class="home-lower">
+            <div class="review-card" id="reviewHomeCard" role="button" tabindex="0">
+              <div><h3 id="reviewTitle">Няма карти за преговор</h3><p id="reviewText">Когато отбележиш трудни карти, ZNAYA ще ги събира тук.</p></div>
+              <div class="review-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="m9 18 6-6-6-6"/></svg></div>
+            </div>
+            <div class="stats-card">
+              <div><div class="stat-value" id="accuracyStat">—</div><div class="stat-label">обща точност</div></div>
+              <div class="stats-divider"></div>
+              <div><div class="stat-value" id="decksStat">0</div><div class="stat-label">учебни комплекта</div></div>
+            </div>
+          </div>
+        </section>
+      </section>
+
+      <section class="view create-view" id="view-create" data-view-panel="create">
+        <div class="create-header">
+          <button class="back-link" type="button" id="createBack">← Начало</button>
+          <div class="create-heading">
+            <span class="create-kicker">Създай с ZNAYA</span>
+            <h1 id="createTitle">От какво искаш да учиш?</h1>
+            <p id="createSubtitle">Добави материал или напиши тема. Ще подготвим всичко останало.</p>
+          </div>
+          <div class="create-progress" aria-label="Напредък при създаване">
+            <span class="create-progress-step active" data-progress-step="1"><i>1</i>Източник</span>
+            <span class="create-progress-line"></span>
+            <span class="create-progress-step" data-progress-step="2"><i>2</i>Настройки</span>
+            <span class="create-progress-line"></span>
+            <span class="create-progress-step" data-progress-step="3"><i>3</i>Преглед</span>
+          </div>
+        </div>
+
+        <div class="create-workspace">
+          <section class="create-step active" data-create-step="1">
+            <div class="source-switch" role="tablist" aria-label="Източник">
+              <button class="source-tab active" type="button" data-source="topic" role="tab" aria-selected="true">
+                <span class="source-icon">✦</span><span><strong>Напиши тема</strong><small>Тема, урок или глава</small></span>
+              </button>
+              <button class="source-tab" type="button" data-source="material" role="tab" aria-selected="false">
+                <span class="source-icon">↥</span><span><strong>Качи материал</strong><small>PDF или снимки</small></span>
+              </button>
+            </div>
+
+            <div class="source-panel active" data-source-panel="topic">
+              <label class="field-label" for="createTopic">Какво искаш да научиш?</label>
+              <textarea class="big-topic-input" id="createTopic" rows="4" placeholder="Напр. Правен позитивизъм, Митоза, Пазарно равновесие…"></textarea>
+              <p class="field-hint">Можеш да бъдеш кратък. ZNAYA ще структурира темата в учебен комплект.</p>
+            </div>
+
+            <div class="source-panel" data-source-panel="material">
+              <input id="materialFiles" type="file" multiple accept="image/png,image/jpeg,image/webp,application/pdf" hidden>
+              <button class="dropzone-new" type="button" id="materialDropzone">
+                <span class="dropzone-mark">↥</span>
+                <strong>Пусни материал тук или избери файлове</strong>
+                <small>PDF, PNG, JPG или WEBP · до 10 файла</small>
+              </button>
+              <div class="file-list" id="fileList"></div>
+              <div class="material-kind-block">
+                <span class="material-kind-title">Какъв тип материал качваш?</span>
+                <div class="material-kind-picker" id="materialKindPicker" role="radiogroup" aria-label="Тип качен материал">
+                  <button class="material-kind active" type="button" data-material-mode="content" role="radio" aria-checked="true">
+                    <span class="material-kind-icon">▤</span>
+                    <span class="material-kind-copy"><strong>Учебен материал</strong><small>Тема, глава, част от книга или записки</small></span>
+                    <span class="material-kind-check">✓</span>
+                  </button>
+                  <button class="material-kind" type="button" data-material-mode="exercise" role="radio" aria-checked="false">
+                    <span class="material-kind-icon">✓</span>
+                    <span class="material-kind-copy"><strong>Тестови задачи</strong><small>Запазва въпросите, опциите и оригиналната им номерация</small></span>
+                    <span class="material-kind-check">✓</span>
+                  </button>
+                </div>
+                <p class="field-hint" id="materialModeHint">За учебен материал можеш да зададеш брой въпроси и трудност на следващата стъпка.</p>
+              </div>
+              <div id="materialTextBlock">
+                <div class="paste-divider"><span>или</span></div>
+                <label class="field-label" for="materialText">Постави текст</label>
+                <textarea class="paste-input" id="materialText" rows="6" placeholder="Постави откъс от лекция, учебник или записки…"></textarea>
+              </div>
+              <label class="field-label compact" for="materialTopic">Име на темата <span>по желание</span></label>
+              <input class="field-input" id="materialTopic" placeholder="Напр. Източници на правото">
+            </div>
+
+            <div class="create-footer"><span></span><button class="primary-button create-next" type="button" id="sourceNext">Продължи →</button></div>
+          </section>
+
+          <section class="create-step" data-create-step="2">
+            <div class="setup-grid">
+              <div class="setup-main">
+                <div class="setup-section">
+                  <div class="setup-head"><div><h2>Предмет</h2><p>Избери категорията на материала.</p></div></div>
+                  <div class="subject-picker" id="createSubjectPicker"></div>
+                </div>
+                <div class="setup-section">
+                  <div class="setup-head"><div><h2>Как искаш да учиш?</h2><p>Избери основния начин, по който ZNAYA да подготви комплекта.</p></div></div>
+                  <div class="mode-picker">
+                    <button class="mode-card active" type="button" data-study-mode="cards"><span class="mode-glyph">▤</span><strong>Карти</strong><small>За разбиране и запаметяване</small></button>
+                    <button class="mode-card" type="button" data-study-mode="test"><span class="mode-glyph">✓</span><strong>Тест</strong><small>За проверка на знанията</small></button>
+                    <button class="mode-card" type="button" data-study-mode="mixed"><span class="mode-glyph">✦</span><strong>Смесено</strong><small>Карти + тестови въпроси</small><em>Препоръчано</em></button>
+                  </div>
+                </div>
+                <p class="setup-note hidden" id="exerciseSettingsNote">При тестови задачи броят въпроси и трудността се определят от качения материал и не се задават ръчно.</p>
+                <details class="advanced-box" id="advancedCreateSettings">
+                  <summary>Разширени настройки</summary>
+                  <div class="advanced-grid">
+                    <label><span>Брой карти</span><select id="cardCount"><option>6</option><option selected>10</option><option>15</option><option>20</option><option>30</option></select></label>
+                    <label><span>Трудност</span><select id="difficulty"><option value="easy">Лесна</option><option value="medium" selected>Средна</option><option value="hard">Трудна</option><option value="university">Университетска</option></select></label>
+                  </div>
+                </details>
+              </div>
+              <aside class="create-summary" id="createSummary"></aside>
+            </div>
+            <div class="create-footer"><button class="secondary-button" type="button" data-create-prev="1">← Назад</button><button class="primary-button create-next" type="button" id="generateButton">Създай с ZNAYA</button></div>
+          </section>
+
+          <section class="create-step" data-create-step="3">
+            <div class="generation-state" id="generationState" aria-live="polite">
+              <div class="generation-orb"><img src="./assets/znaya-symbol.png" alt=""></div>
+              <h2>Подготвяме учебния комплект…</h2>
+              <p id="generationMessage">ZNAYA анализира материала и подбира най-подходящите въпроси.</p>
+              <div class="generation-bar"><i></i></div>
+            </div>
+
+            <div class="review-workspace hidden" id="reviewWorkspace">
+              <div class="review-top">
+                <div><span class="create-kicker">Готово за преглед</span><h2>Провери комплекта</h2><p>Редактирай въпросите, ако искаш, преди да ги запазиш.</p></div>
+                <div class="review-count" id="reviewCount">0 карти</div>
+              </div>
+              <div class="deck-name-row"><label class="field-label" for="deckName">Име на комплекта</label><input class="field-input" id="deckName"></div>
+              <div class="generated-list" id="generatedList"></div>
+              <div class="create-footer"><button class="secondary-button" type="button" id="regenerateButton">↻ Генерирай отново</button><button class="primary-button create-next" type="button" id="saveDeckButton">Запази комплекта</button></div>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <section class="view library-view" id="view-library" data-view-panel="library">
+        <div class="library-head">
+          <div><span class="page-kicker">Твоите знания</span><h1 class="page-title">Библиотека</h1><p class="page-subtitle">Всички учебни комплекти — на едно място, независимо от предмета.</p></div>
+          <button class="primary-button library-create" type="button" id="libraryCreate">＋ Нов комплект</button>
+        </div>
+        <div class="library-toolbar">
+          <label class="library-search">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+            <input id="librarySearch" type="search" autocomplete="off" placeholder="Търси в библиотеката…">
+          </label>
+          <select class="library-sort" id="librarySort" aria-label="Подреждане">
+            <option value="recent">Последно променени</option><option value="name">По име</option><option value="cards">Най-много карти</option><option value="progress">Най-голям напредък</option>
+          </select>
+        </div>
+        <div class="library-filters" id="libraryFilters"></div>
+        <div class="library-summary"><span id="libraryCount">0 комплекта</span><span id="libraryResultHint"></span></div>
+        <div class="library-grid" id="libraryGrid"></div>
+      </section>
+
+      <section class="view study-view" id="view-study" data-view-panel="study">
+        <div class="study-shell" id="studyShell"></div>
+      </section>
+      <section class="view insight-view" id="view-review" data-view-panel="review">
+        <div class="page-intro">
+          <span class="page-kicker">Умен преговор</span>
+          <h1 class="page-title">Преговор</h1>
+          <p class="page-subtitle">ZNAYA подрежда трудните карти според натрупаните грешки и последното упражняване.</p>
+        </div>
+        <div class="review-overview">
+          <article class="review-focus-card" id="reviewFocusCard">
+            <div class="review-focus-copy"><span class="review-focus-label">За преговор</span><strong id="reviewDueCount">0 карти</strong><p id="reviewDueDescription">Няма карти, които чакат преговор.</p></div>
+            <button class="review-start" id="reviewStartAll" type="button">Започни преговор <span>→</span></button>
+          </article>
+          <div class="review-mini-stats">
+            <article><span>Висок приоритет</span><strong id="reviewHighCount">0</strong><small>с 2+ натрупани грешки</small></article>
+            <article><span>Предмети за преговор</span><strong id="reviewSubjectCount">0</strong><small>с поне една трудна карта</small></article>
+          </div>
+        </div>
+        <section class="insight-section">
+          <div class="section-head"><div><h2>Най-трудни карти</h2><p>Първо показваме картите, които са те затруднили най-много.</p></div></div>
+          <div class="priority-list" id="reviewPriorityList"></div>
+        </section>
+        <section class="insight-section">
+          <div class="section-head"><div><h2>По предмети</h2><p>Можеш да направиш кратък преговор само по един предмет.</p></div></div>
+          <div class="review-subject-grid" id="reviewSubjectGrid"></div>
+        </section>
+      </section>
+
+      <section class="view insight-view" id="view-subjects" data-view-panel="subjects">
+        <div class="page-intro">
+          <span class="page-kicker">Организация</span>
+          <h1 class="page-title">Предмети</h1>
+          <p class="page-subtitle">Предметът е категория. Всички комплекти, резултати и преговори остават в една ZNAYA.</p>
+        </div>
+        <div class="subject-page-summary" id="subjectPageSummary"></div>
+        <div class="subjects-dashboard" id="subjectsDashboard"></div>
+      </section>
+
+      <section class="view insight-view" id="view-progress" data-view-panel="progress">
+        <div class="page-intro">
+          <span class="page-kicker">Твоето учене</span>
+          <h1 class="page-title">Напредък</h1>
+          <p class="page-subtitle">Само показатели, които помагат да разбереш какво знаеш и къде има нужда от още работа.</p>
+        </div>
+        <div class="progress-kpis" id="progressKpis"></div>
+        <div class="progress-main-grid">
+          <article class="activity-card">
+            <div class="panel-heading"><div><span>Последните 7 дни</span><h2>Учебна активност</h2></div><strong id="activityTotal">0 отговора</strong></div>
+            <div class="activity-chart" id="activityChart"></div>
+          </article>
+          <article class="progress-insight-card" id="progressInsightCard"></article>
+        </div>
+        <section class="insight-section">
+          <div class="section-head"><div><h2>Напредък по предмети</h2><p>Точност, овладяване и карти за преговор на едно място.</p></div></div>
+          <div class="subject-progress-list" id="subjectProgressList"></div>
+        </section>
+      </section>
+      <section class="view settings-view" id="view-settings" data-view-panel="settings">
+        <div class="page-intro settings-intro">
+          <span class="page-kicker">Твоят ZNAYA</span>
+          <h1 class="page-title">Настройки</h1>
+          <p class="page-subtitle">Настройки за учене, ZNAYA AI, локалните ти данни и информация за платформата.</p>
+        </div>
+
+        <div class="settings-layout">
+          <nav class="settings-nav" aria-label="Раздели в настройките">
+            <button class="settings-nav-item active" type="button" data-settings-tab="learning">Учене</button>
+            <button class="settings-nav-item" type="button" data-settings-tab="ai">ZNAYA AI</button>
+            <button class="settings-nav-item" type="button" data-settings-tab="data">Данни</button>
+            <button class="settings-nav-item" type="button" data-settings-tab="about">За ZNAYA</button>
+          </nav>
+
+          <div class="settings-content">
+            <section class="settings-panel active" data-settings-panel="learning">
+              <div class="settings-panel-head"><div><span class="settings-eyebrow">По подразбиране</span><h2>Учене и създаване</h2><p>Тези стойности ще се предлагат автоматично при нов учебен комплект.</p></div></div>
+              <div class="settings-card">
+                <label class="settings-field"><span><strong>Режим на учене</strong><small>Какъв комплект да предлага ZNAYA първо.</small></span><select id="settingStudyMode"><option value="cards">Карти</option><option value="test">Тест</option><option value="mixed">Смесено</option></select></label>
+                <label class="settings-field"><span><strong>Брой карти</strong><small>Начален размер на нов комплект.</small></span><select id="settingCardCount"><option value="5">5</option><option value="10">10</option><option value="15">15</option><option value="20">20</option><option value="25">25</option></select></label>
+                <label class="settings-field"><span><strong>Трудност</strong><small>Можеш да я променяш при всяко създаване.</small></span><select id="settingDifficulty"><option value="easy">Лесно</option><option value="medium">Средно</option><option value="hard">Трудно</option><option value="university">Университетско</option></select></label>
+                <label class="settings-switch"><span><strong>Запомняй последния предмет</strong><small>Следващият комплект започва с последно използвания предмет.</small></span><input id="settingRememberSubject" type="checkbox"><i aria-hidden="true"></i></label>
+              </div>
+              <div class="settings-save-row"><span id="learningSettingsState">Промените се запазват локално.</span><button class="primary-button compact-button" id="saveLearningSettings" type="button">Запази</button></div>
+            </section>
+
+            <section class="settings-panel" data-settings-panel="ai">
+              <div class="settings-panel-head"><div><span class="settings-eyebrow">Зад кулисите</span><h2>ZNAYA AI</h2><p>По подразбиране ZNAYA избира най-простия работещ път. Не е нужно да настройваш доставчик.</p></div><span class="status-pill" id="aiStatusPill">Проверка…</span></div>
+              <div class="ai-recommended-card">
+                <div class="ai-orb">✦</div><div><strong>Автоматично е препоръчано</strong><p>Puter е основният AI. Резервен личен ключ се използва само ако изрично го добавиш.</p></div><button class="secondary-button" id="connectPuter" type="button">Свържи Puter</button>
+              </div>
+              <div class="settings-card">
+                <label class="settings-field"><span><strong>AI режим</strong><small>„Автоматично“ скрива техническите решения от теб.</small></span><select id="settingAiMode"><option value="auto">Автоматично</option><option value="puter">Само Puter</option><option value="off">Изключен</option></select></label>
+                <label class="settings-field"><span><strong>Резервен доставчик</strong><small>Използва се при проблем с основния AI.</small></span><select id="settingBackupProvider"><option value="none">Няма</option><option value="gemini">Gemini — личен ключ</option><option value="groq">Groq — личен ключ</option></select></label>
+              </div>
+              <details class="advanced-settings" id="advancedAiSettings">
+                <summary><span><strong>Разширени AI настройки</strong><small>Модели и лични API ключове</small></span><span class="details-chevron">⌄</span></summary>
+                <div class="advanced-settings-body">
+                  <div class="advanced-grid">
+                    <label><span>Puter модел</span><input id="settingPuterModel" autocomplete="off"></label>
+                    <label><span>Gemini модел</span><input id="settingGeminiModel" autocomplete="off"></label>
+                    <label><span>Groq модел</span><input id="settingGroqModel" autocomplete="off"></label>
+                  </div>
+                  <div class="api-key-block">
+                    <div class="api-key-copy"><strong>Лични API ключове</strong><p>Ключовете се пазят само в текущата browser сесия и не влизат в backup файла.</p></div>
+                    <div class="api-key-row"><label><span>Gemini</span><input id="geminiSessionKey" type="password" autocomplete="off" placeholder="Постави ключ за тази сесия"></label><button class="secondary-button" type="button" data-save-session-key="gemini">Запази</button><button class="quiet-button" type="button" data-clear-session-key="gemini">Изчисти</button></div>
+                    <div class="api-key-row"><label><span>Groq</span><input id="groqSessionKey" type="password" autocomplete="off" placeholder="Постави ключ за тази сесия"></label><button class="secondary-button" type="button" data-save-session-key="groq">Запази</button><button class="quiet-button" type="button" data-clear-session-key="groq">Изчисти</button></div>
+                  </div>
+                </div>
+              </details>
+              <div class="settings-save-row"><span id="aiSettingsState">AI настройките се пазят локално.</span><button class="primary-button compact-button" id="saveAiSettings" type="button">Запази AI настройките</button></div>
+            </section>
+
+            <section class="settings-panel" data-settings-panel="data">
+              <div class="settings-panel-head"><div><span class="settings-eyebrow">Твоите данни</span><h2>Backup и управление</h2><p>Комплектите и напредъкът са локални за този браузър. Можеш да ги изнесеш по всяко време.</p></div></div>
+              <div class="data-action-grid">
+                <article class="data-action-card"><div class="data-action-icon">↓</div><strong>Изтегли backup</strong><p>Запази библиотеката, статистиката и настройките в един JSON файл.</p><button class="secondary-button" id="exportData" type="button">Изтегли backup</button></article>
+                <article class="data-action-card"><div class="data-action-icon">↑</div><strong>Възстанови backup</strong><p>Импортирай ZNAYA backup. Текущите локални данни ще бъдат заменени.</p><input id="importDataFile" type="file" accept="application/json,.json" hidden><button class="secondary-button" id="importData" type="button">Избери backup</button></article>
+              </div>
+              <div class="storage-summary" id="storageSummary"></div>
+              <div class="danger-zone"><div><span class="settings-eyebrow danger">Опасна зона</span><h3>Нулиране</h3><p>Можеш да изчистиш само учебната история или всички локални данни.</p></div><div class="danger-actions"><button class="secondary-button" id="resetProgress" type="button">Изчисти напредъка</button><button class="danger-button" id="eraseAllData" type="button">Изтрий всичко</button></div></div>
+            </section>
+
+            <section class="settings-panel" data-settings-panel="about">
+              <div class="settings-panel-head"><div><span class="settings-eyebrow">Продукт</span><h2>За ZNAYA</h2><p>ZNAYA 1.0 — новата учебна платформа от материал до знание.</p></div></div>
+              <div class="about-brand-card"><img src="./assets/znaya-lockup.png" alt="ZNAYA"><p>От материал до знание.</p></div>
+              <div class="about-grid">
+                <div><span>Версия</span><strong>1.0 · Release Candidate 2</strong></div><div><span>Данни</span><strong>Локално в браузъра</strong></div><div><span>Мрежа</span><strong id="networkStatus">—</strong></div><div><span>Приложение</span><strong id="pwaStatus">Web / PWA</strong></div>
+              </div>
+              <div class="diagnostic-card"><div><strong>Системна проверка</strong><p id="diagnosticText">Проверяваме основните компоненти…</p></div><button class="secondary-button" id="runDiagnostics" type="button">Провери</button></div>
+            </section>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+
+<div class="deck-backdrop" id="deckBackdrop" aria-hidden="true" hidden>
+  <section class="deck-detail" role="dialog" aria-modal="true" aria-labelledby="deckDetailTitle">
+    <div class="deck-detail-head"><button class="deck-detail-close" id="deckDetailClose" type="button" aria-label="Затвори">×</button><div class="deck-detail-subject" id="deckDetailSubject"></div><h2 id="deckDetailTitle">Комплект</h2><p id="deckDetailMeta"></p></div>
+    <div class="deck-detail-stats" id="deckDetailStats"></div>
+    <div class="deck-detail-actions"><button class="primary-button" id="deckStudyButton" type="button">Учи</button><button class="secondary-button" id="deckEditButton" type="button">Редактирай</button><button class="secondary-button" id="deckDuplicateButton" type="button">Дублирай</button><button class="danger-quiet" id="deckDeleteButton" type="button">Изтрий</button></div>
+    <div class="deck-preview-head"><strong>Съдържание</strong><span id="deckPreviewCount"></span></div><div class="deck-preview-list" id="deckPreviewList"></div>
+  </section>
+</div>
+
+<div class="deck-backdrop" id="editBackdrop" aria-hidden="true" hidden>
+  <section class="deck-editor" role="dialog" aria-modal="true" aria-labelledby="editDeckHeading">
+    <div class="editor-head"><div><span class="page-kicker">Редакция</span><h2 id="editDeckHeading">Редактирай комплекта</h2></div><button class="deck-detail-close" id="editDeckClose" type="button" aria-label="Затвори">×</button></div>
+    <div class="editor-basics"><label><span>Име</span><input class="field-input" id="editDeckName"></label><label><span>Предмет</span><select class="field-input" id="editDeckSubject"></select></label></div>
+    <div class="editor-cards" id="editCards"></div>
+    <div class="editor-footer"><button class="secondary-button" id="editCancel" type="button">Отказ</button><button class="primary-button" id="editSave" type="button">Запази промените</button></div>
+  </section>
+</div>
+
+<div class="confirm-backdrop" id="confirmBackdrop" aria-hidden="true" hidden>
+  <section class="confirm-box" role="alertdialog" aria-modal="true" aria-labelledby="confirmTitle">
+    <div class="confirm-icon">!</div><h2 id="confirmTitle">Изтриване на комплект</h2><p id="confirmText">Това действие не може да бъде отменено.</p><div class="confirm-actions"><button class="secondary-button" id="confirmCancel" type="button">Отказ</button><button class="danger-button" id="confirmDelete" type="button">Изтрий</button></div>
+  </section>
+</div>
+
+<div class="confirm-backdrop" id="dataConfirmBackdrop" aria-hidden="true" hidden>
+  <section class="confirm-box" role="alertdialog" aria-modal="true" aria-labelledby="dataConfirmTitle">
+    <div class="confirm-icon">!</div><h2 id="dataConfirmTitle">Потвърди действието</h2><p id="dataConfirmText"></p><div class="confirm-actions"><button class="secondary-button" id="dataConfirmCancel" type="button">Отказ</button><button class="danger-button" id="dataConfirmAccept" type="button">Продължи</button></div>
+  </section>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+window.ZNAYAPuterReady=window.ZNAYAPuterReady||new Promise((resolve)=>{const s=document.createElement('script');s.src='https://js.puter.com/v2/';s.async=true;s.onload=()=>resolve(true);s.onerror=()=>resolve(false);document.head.appendChild(s);});
+</script>
+<script src="./znaya-ai.js?v=6.3.0-rc8" defer></script>
+<script src="./app.js?v=6.3.0-rc8" defer></script>
+</body>
+</html>
