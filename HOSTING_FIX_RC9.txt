@@ -1,0 +1,6 @@
+ZNAYA RC9 — Embedded Brand
+
+Visible ZNAYA brand assets and browser favicon are embedded directly in index.html / app.css as data URIs.
+They no longer depend on /assets paths, so the logo renders even when a hosting platform changes the project base path or does not expose binary assets as expected.
+
+Keep the assets folder in the deployment anyway because PWA/manifest icons and future resources may use it.
