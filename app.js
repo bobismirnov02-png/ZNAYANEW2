@@ -1,5 +1,19 @@
 (() => {
   'use strict';
+
+  const THEME_KEY='znaya-theme';
+  function currentTheme(){return document.documentElement.dataset.theme==='dark'?'dark':'light';}
+  function applyTheme(theme,{persist=true}={}){
+    const next=theme==='dark'?'dark':'light';
+    document.documentElement.dataset.theme=next;
+    document.documentElement.style.colorScheme=next;
+    if(persist){try{localStorage.setItem(THEME_KEY,next);}catch{}}
+    const toggle=document.getElementById('themeToggle');
+    if(toggle){const darkMode=next==='dark';toggle.setAttribute('aria-pressed',String(darkMode));toggle.setAttribute('aria-label',darkMode?'Включи светла тема':'Включи тъмна тема');toggle.title=darkMode?'Светла тема':'Тъмна тема';}
+    const meta=document.getElementById('themeColorMeta');if(meta)meta.setAttribute('content',next==='dark'?'#0f1117':'#fafaff');
+    document.querySelectorAll('.theme-brand-image[data-logo-light][data-logo-dark]').forEach(img=>{img.src=next==='dark'?img.dataset.logoDark:img.dataset.logoLight;});
+  }
+  function initTheme(){let saved='light';try{saved=localStorage.getItem(THEME_KEY)==='dark'?'dark':'light';}catch{}applyTheme(saved,{persist:false});}
   const STORE_KEY='biohim21-state-v2';
   const SUBJECTS=[
     {id:'biology',label:'Биология',color:'#4f9f7e'},
@@ -698,5 +712,9 @@
   window.addEventListener('hashchange',()=>setView((location.hash||'#home').slice(1)));
   setView((location.hash||'#home').slice(1));
 })();
+
+
+  initTheme();
+  document.getElementById('themeToggle')?.addEventListener('click',()=>applyTheme(currentTheme()==='dark'?'light':'dark'));
 
 if('serviceWorker' in navigator&&!window.ZNAYA_PREVIEW_MODE){window.addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js').catch(()=>{}));}
