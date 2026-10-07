@@ -1,4 +1,4 @@
-const CACHE='znaya-public-dark-surface-fix';
+const CACHE='znaya-public-multi-button-fix';
 const ASSETS=['./','./index.html','./app.css','./app.js','./znaya-ai.js','./manifest.json','./assets/favicon.ico','./assets/favicon-16.png','./assets/favicon-32.png','./assets/favicon-48.png','./assets/favicon-64.png','./assets/znaya-64.png','./assets/znaya-192.png','./assets/znaya-512.png','./assets/znaya-symbol.png','./assets/znaya-lockup.png'];
 self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(ASSETS)).then(()=>self.skipWaiting())));
 self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));

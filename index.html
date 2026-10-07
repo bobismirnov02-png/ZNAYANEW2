@@ -12,7 +12,7 @@
   
   <link rel="apple-touch-icon" sizes="192x192" href="./assets/znaya-192.png">
   <link rel="manifest" href="./manifest.json">
-  <link rel="stylesheet" href="./app.css?v=public-dark-surface-fix">
+  <link rel="stylesheet" href="./app.css?v=public-multi-deck-button-fix">
 
   <style id="znaya-critical-overlays">
     [hidden]{display:none!important}
@@ -297,7 +297,10 @@
       <section class="view library-view" id="view-library" data-view-panel="library">
         <div class="library-head">
           <div><span class="page-kicker">Твоите знания</span><h1 class="page-title">Библиотека</h1><p class="page-subtitle">Всички учебни комплекти — на едно място, независимо от предмета.</p></div>
-          <button class="primary-button library-create" type="button" id="libraryCreate">＋ Нов комплект</button>
+          <div class="library-head-actions">
+            <button class="secondary-button multi-deck-open" type="button" id="multiDeckOpen">Отвори няколко</button>
+            <button class="primary-button library-create" type="button" id="libraryCreate">＋ Нов комплект</button>
+          </div>
         </div>
         <div class="library-toolbar">
           <label class="library-search">
@@ -480,12 +483,38 @@
   </section>
 </div>
 
+<div class="multi-deck-backdrop" id="multiDeckBackdrop" aria-hidden="true" hidden>
+  <section class="multi-deck-modal" role="dialog" aria-modal="true" aria-labelledby="multiDeckTitle">
+    <div class="multi-deck-head">
+      <div><span class="page-kicker">Комбинирано учене</span><h2 id="multiDeckTitle">Отвори няколко комплекта</h2><p>Избери два или повече комплекта и ги учи в една обща сесия.</p></div>
+      <button class="deck-detail-close" id="multiDeckClose" type="button" aria-label="Затвори">×</button>
+    </div>
+    <div class="multi-deck-tools">
+      <label class="multi-deck-search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input id="multiDeckSearch" type="search" autocomplete="off" placeholder="Търси комплект…">
+      </label>
+      <div class="multi-deck-selection-actions">
+        <button type="button" class="quiet-button" id="multiDeckSelectAll">Избери всички</button>
+        <button type="button" class="quiet-button" id="multiDeckClear">Изчисти</button>
+      </div>
+    </div>
+    <div class="multi-deck-filters" id="multiDeckFilters"></div>
+    <div class="multi-deck-summary"><span id="multiDeckVisibleCount">0 комплекта</span><strong id="multiDeckSelectedCount">0 избрани</strong></div>
+    <div class="multi-deck-list" id="multiDeckList"></div>
+    <div class="multi-deck-footer">
+      <span id="multiDeckHint">Избери поне 2 комплекта.</span>
+      <button class="primary-button" id="multiDeckStart" type="button" disabled>Учи избраните</button>
+    </div>
+  </section>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
 window.ZNAYAPuterReady=window.ZNAYAPuterReady||new Promise((resolve)=>{const s=document.createElement('script');s.src='https://js.puter.com/v2/';s.async=true;s.onload=()=>resolve(true);s.onerror=()=>resolve(false);document.head.appendChild(s);});
 </script>
-<script src="./znaya-ai.js?v=public-dark-surface-fix" defer></script>
-<script src="./app.js?v=public-dark-surface-fix" defer></script>
+<script src="./znaya-ai.js?v=public-multi-deck-button-fix" defer></script>
+<script src="./app.js?v=public-multi-deck-button-fix" defer></script>
 </body>
 </html>

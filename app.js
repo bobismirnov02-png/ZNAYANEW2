@@ -256,6 +256,7 @@
 
 
   const libraryState={query:'',subject:'all',sort:'recent',openDeckId:null,editDraft:null};
+  const multiDeckState={query:'',subject:'all',selected:new Set()};
   function filteredDecks(){
     state=loadState();let decks=[...(state.deckLibrary||[])];const q=libraryState.query.trim().toLocaleLowerCase('bg-BG');
     if(libraryState.subject!=='all')decks=decks.filter(d=>d.subject===libraryState.subject);
@@ -276,6 +277,35 @@
     document.getElementById('libraryResultHint').textContent=(libraryState.query||libraryState.subject!=='all')&&decks.length!==total?`от общо ${total}`:'';
     if(!decks.length){grid.innerHTML=`<div class="library-empty"><div><div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 4h14v16H5z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></div><strong>${total?'Няма съвпадения':'Библиотеката ти е празна'}</strong><p>${total?'Промени търсенето или избери друг предмет.':'Създай първия си учебен комплект от тема, PDF, текст или снимки.'}</p>${total?'':`<button class="primary-button" type="button" data-empty-create>＋ Създай комплект</button>`}</div></div>`;return;}
     grid.innerHTML=decks.map(libraryCard).join('');
+  }
+  function openMultiDeckPicker(){
+    state=loadState();multiDeckState.query='';multiDeckState.subject='all';multiDeckState.selected=new Set();
+    const search=document.getElementById('multiDeckSearch');if(search)search.value='';renderMultiDeckPicker();
+    const b=document.getElementById('multiDeckBackdrop');b.hidden=false;b.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';
+    setTimeout(()=>search?.focus(),30);
+  }
+  function closeMultiDeckPicker(){const b=document.getElementById('multiDeckBackdrop');if(!b)return;b.hidden=true;b.setAttribute('aria-hidden','true');document.body.style.overflow='';}
+  function multiDeckFiltered(){state=loadState();const q=multiDeckState.query.trim().toLocaleLowerCase('bg-BG');return (state.deckLibrary||[]).filter(d=>{
+    if(multiDeckState.subject!=='all'&&d.subject!==multiDeckState.subject)return false;
+    if(q&&!`${d.name||''} ${subjectInfo(d.subject).label}`.toLocaleLowerCase('bg-BG').includes(q))return false;
+    return true;
+  });}
+  function renderMultiDeckPicker(){
+    state=loadState();const all=state.deckLibrary||[],visible=multiDeckFiltered(),filters=document.getElementById('multiDeckFilters'),list=document.getElementById('multiDeckList');if(!filters||!list)return;
+    const counts=Object.fromEntries(SUBJECTS.map(s=>[s.id,all.filter(d=>d.subject===s.id).length]));
+    filters.innerHTML=`<button class="filter-chip ${multiDeckState.subject==='all'?'active':''}" type="button" data-multi-subject="all">Всички · ${all.length}</button>`+SUBJECTS.map(s=>`<button class="filter-chip ${multiDeckState.subject===s.id?'active':''}" type="button" data-multi-subject="${esc(s.id)}"><span class="subject-dot" style="--subject-color:${s.color}"></span>${esc(s.label)} · ${counts[s.id]||0}</button>`).join('');
+    document.getElementById('multiDeckVisibleCount').textContent=`${visible.length} ${visible.length===1?'комплект':'комплекта'}`;
+    document.getElementById('multiDeckSelectedCount').textContent=`${multiDeckState.selected.size} избрани`;
+    if(!visible.length)list.innerHTML='<div class="multi-deck-empty">Няма комплекти, които отговарят на търсенето.</div>';
+    else list.innerHTML=visible.map(deck=>{const s=subjectInfo(deck.subject),m=deckMetrics(deck,state),selected=multiDeckState.selected.has(String(deck.id));return `<button type="button" class="multi-deck-option ${selected?'selected':''}" data-multi-deck="${esc(deck.id)}" aria-pressed="${selected}"><span class="multi-deck-check">✓</span><span class="multi-deck-copy"><strong>${esc(deck.name||'Без име')}</strong><small>${m.cards} ${m.cards===1?'карта':'карти'} · ${m.attempts?`${m.accuracy}% точност`:'не е започнат'}</small></span><span class="multi-deck-subject"><span class="subject-dot" style="--subject-color:${s.color}"></span>${esc(s.label)}</span></button>`;}).join('');
+    const start=document.getElementById('multiDeckStart'),hint=document.getElementById('multiDeckHint'),n=multiDeckState.selected.size;if(start){start.disabled=n<2;start.textContent=n>=2?`Учи ${n} комплекта`:'Учи избраните';}if(hint)hint.textContent=n<2?'Избери поне 2 комплекта.':`${n} комплекта ще се отворят в една обща сесия.`;
+    const selectAll=document.getElementById('multiDeckSelectAll');if(selectAll)selectAll.textContent=all.length&&all.every(d=>multiDeckState.selected.has(String(d.id)))?'Премахни всички':'Избери всички';
+  }
+  function startMultiDeckStudy(){
+    state=loadState();const ids=[...multiDeckState.selected],decks=ids.map(id=>findDeck(id)).filter(Boolean);if(decks.length<2){toast('Избери поне 2 комплекта.');return;}
+    const cards=[];for(const deck of decks){for(const card of deck.cards||[])cards.push({...JSON.parse(JSON.stringify(card)),_deckId:deck.id,_deckName:deck.name,_subject:deck.subject});}
+    if(!cards.length){toast('Избраните комплекти нямат карти.');return;}
+    closeMultiDeckPicker();closeDeckDetail();studyState.mode='multi';studyState.returnView='library';studyState.reviewSubject='all';studyState.reviewCards=[];studyState.multiCards=cards;studyState.multiDeckIds=decks.map(d=>String(d.id));studyState.deckId='__multi__';studyState.index=0;studyState.known=0;studyState.unknown=0;resetStudyCardState();go('study');
   }
   function openDeckDetail(id){state=loadState();const deck=findDeck(id);if(!deck)return;libraryState.openDeckId=String(id);const s=subjectInfo(deck.subject),m=deckMetrics(deck,state),cards=deck.cards||[];
     document.getElementById('deckDetailSubject').innerHTML=`<span class="subject-dot" style="--subject-color:${s.color}"></span>${esc(s.label)}`;document.getElementById('deckDetailTitle').textContent=deck.name||'Без име';document.getElementById('deckDetailMeta').textContent=`Обновен ${formatUpdated(deck)} · ${deck.source||'ZNAYA'}`;
@@ -301,11 +331,11 @@
     combo:{label:'Комбинация',help:'Прегледай твърденията и избери вярната комбинация.'},
     match:{label:'Свързване',help:'Свържи всеки елемент отляво с правилния елемент отдясно.'}
   };
-  const studyState={deckId:null,index:0,revealed:false,selected:null,known:0,unknown:0,matchMap:{},matchOrder:[],activeMatch:null,matchChecked:false,matchResult:null,mode:'deck',returnView:'library',reviewSubject:'all',reviewCards:[]};
+  const studyState={deckId:null,index:0,revealed:false,selected:null,known:0,unknown:0,matchMap:{},matchOrder:[],activeMatch:null,matchChecked:false,matchResult:null,mode:'deck',returnView:'library',reviewSubject:'all',reviewCards:[],multiCards:[],multiDeckIds:[]};
   function resetStudyCardState(){studyState.revealed=false;studyState.selected=null;studyState.matchMap={};studyState.matchOrder=[];studyState.activeMatch=null;studyState.matchChecked=false;studyState.matchResult=null;}
-  function startStudy(id){state=loadState();const deck=findDeck(id);if(!deck||!(deck.cards||[]).length){toast('Този комплект няма карти.');return;}closeDeckDetail();studyState.mode='deck';studyState.returnView='library';studyState.reviewSubject='all';studyState.reviewCards=[];studyState.deckId=String(id);studyState.index=0;studyState.known=0;studyState.unknown=0;resetStudyCardState();state.currentDeckId=deck.id;state.currentDeckName=deck.name;state.deck=JSON.parse(JSON.stringify(deck.cards));saveState();go('study');}
-  function startReview(subject='all'){state=loadState();const queue=reviewQueue(subject,state);if(!queue.length){toast('Няма карти за преговор в тази категория.');return;}closeDeckDetail();studyState.mode='review';studyState.returnView='review';studyState.reviewSubject=subject;studyState.reviewCards=queue.map(x=>({...JSON.parse(JSON.stringify(x.card)),_deckId:x.deck.id,_deckName:x.deck.name,_subject:x.deck.subject,_reviewWeight:x.mistakes}));studyState.deckId='__review__';studyState.index=0;studyState.known=0;studyState.unknown=0;resetStudyCardState();go('study');}
-  function studySessionDeck(){if(studyState.mode==='review'){const cards=studyState.reviewCards||[];return {id:'__review__',name:studyState.reviewSubject==='all'?'Преговор':`Преговор · ${subjectInfo(studyState.reviewSubject).label}`,subject:cards[0]?._subject||studyState.reviewSubject,cards};}return findDeck(studyState.deckId||state.currentDeckId);}
+  function startStudy(id){state=loadState();const deck=findDeck(id);if(!deck||!(deck.cards||[]).length){toast('Този комплект няма карти.');return;}closeDeckDetail();studyState.mode='deck';studyState.returnView='library';studyState.reviewSubject='all';studyState.reviewCards=[];studyState.multiCards=[];studyState.multiDeckIds=[];studyState.deckId=String(id);studyState.index=0;studyState.known=0;studyState.unknown=0;resetStudyCardState();state.currentDeckId=deck.id;state.currentDeckName=deck.name;state.deck=JSON.parse(JSON.stringify(deck.cards));saveState();go('study');}
+  function startReview(subject='all'){state=loadState();const queue=reviewQueue(subject,state);if(!queue.length){toast('Няма карти за преговор в тази категория.');return;}closeDeckDetail();studyState.mode='review';studyState.returnView='review';studyState.reviewSubject=subject;studyState.reviewCards=queue.map(x=>({...JSON.parse(JSON.stringify(x.card)),_deckId:x.deck.id,_deckName:x.deck.name,_subject:x.deck.subject,_reviewWeight:x.mistakes}));studyState.multiCards=[];studyState.multiDeckIds=[];studyState.deckId='__review__';studyState.index=0;studyState.known=0;studyState.unknown=0;resetStudyCardState();go('study');}
+  function studySessionDeck(){if(studyState.mode==='review'){const cards=studyState.reviewCards||[];return {id:'__review__',name:studyState.reviewSubject==='all'?'Преговор':`Преговор · ${subjectInfo(studyState.reviewSubject).label}`,subject:cards[0]?._subject||studyState.reviewSubject,cards};}if(studyState.mode==='multi'){const cards=studyState.multiCards||[];return {id:'__multi__',name:`Комбинирано учене · ${studyState.multiDeckIds.length} комплекта`,subject:cards[0]?._subject||'biology',cards};}return findDeck(studyState.deckId||state.currentDeckId);}
   function currentStudyCard(){const deck=studySessionDeck();return deck?.cards?.[studyState.index]||null;}
   function cleanMatchItems(values){return (Array.isArray(values)?values:[]).map(v=>String(v??'').trim()).filter(Boolean).slice(0,8);}
   function shuffledMatchOrder(length){const order=Array.from({length},(_,i)=>i);for(let i=order.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[order[i],order[j]]=[order[j],order[i]];}return order;}
@@ -330,7 +360,7 @@
   function renderStudy(){
     const root=document.getElementById('studyShell');if(!root)return;state=loadState();const deck=studySessionDeck();const cards=deck?.cards||[];
     if(!deck||!cards.length){root.innerHTML=`<div class="study-finish"><h2>${studyState.mode==='review'?'Няма карти за преговор':'Няма избран комплект'}</h2><p>${studyState.mode==='review'?'Опашката за преговор е празна.':'Отвори библиотеката и избери комплект, който искаш да учиш.'}</p><button class="primary-button" type="button" data-study-return>${studyState.mode==='review'?'Към преговора':'Към библиотеката'}</button></div>`;return;}
-    if(studyState.index>=cards.length){const total=studyState.known+studyState.unknown,acc=total?Math.round(studyState.known/total*100):0,isReview=studyState.mode==='review';root.innerHTML=`<div class="study-finish"><div class="study-finish-mark">✓</div><h2>${isReview?'Преговорът е готов':'Сесията е готова'}</h2><p>${isReview?'Мина през всички избрани трудни карти. Опашката вече е обновена според резултатите ти.':`Мина през всички карти в „${esc(deck.name)}“. Резултатите вече са записани.`}</p><div class="study-finish-stats"><div class="finish-stat"><strong>${cards.length}</strong><span>карти</span></div><div class="finish-stat"><strong>${studyState.known}</strong><span>знаех</span></div><div class="finish-stat"><strong>${acc}%</strong><span>точност</span></div></div><div class="study-finish-actions"><button class="secondary-button" type="button" data-study-return>${isReview?'Към преговора':'Библиотека'}</button>${isReview?'<button class="primary-button" type="button" data-study-review-again>Преговори оставащите</button>':'<button class="primary-button" type="button" data-study-repeat>Учи отново</button>'}</div></div>`;return;}
+    if(studyState.index>=cards.length){const total=studyState.known+studyState.unknown,acc=total?Math.round(studyState.known/total*100):0,isReview=studyState.mode==='review',isMulti=studyState.mode==='multi';root.innerHTML=`<div class="study-finish"><div class="study-finish-mark">✓</div><h2>${isReview?'Преговорът е готов':isMulti?'Комбинираната сесия е готова':'Сесията е готова'}</h2><p>${isReview?'Мина през всички избрани трудни карти. Опашката вече е обновена според резултатите ти.':isMulti?`Мина през всички карти от ${studyState.multiDeckIds.length} избрани комплекта. Резултатите са записани към оригиналните им комплекти.`:`Мина през всички карти в „${esc(deck.name)}“. Резултатите вече са записани.`}</p><div class="study-finish-stats"><div class="finish-stat"><strong>${cards.length}</strong><span>карти</span></div><div class="finish-stat"><strong>${studyState.known}</strong><span>знаех</span></div><div class="finish-stat"><strong>${acc}%</strong><span>точност</span></div></div><div class="study-finish-actions"><button class="secondary-button" type="button" data-study-return>${isReview?'Към преговора':'Библиотека'}</button>${isReview?'<button class="primary-button" type="button" data-study-review-again>Преговори оставащите</button>':'<button class="primary-button" type="button" data-study-repeat>Учи отново</button>'}</div></div>`;return;}
     const c=cards[studyState.index],subjectId=c._subject||deck.subject,s=subjectInfo(subjectId),pct=Math.round(studyState.index/cards.length*100),meta=STUDY_TYPE_META[c.type]||{label:TYPE_LABELS[c.type]||'Карта',help:'Отговори на въпроса и провери решението.'};let body='',specialMatch=c.type==='match';
     if(c.type==='mcq'&&Array.isArray(c.o)){const cropped=hasQuestionCrop(c);body=`<div class="study-options ${cropped?'study-options-crop':''}">${c.o.map((o,i)=>`<button type="button" class="study-option ${studyState.selected==='ABCD'[i]?'selected':''}" data-study-option="${'ABCD'[i]}"><strong>${'ABCD'[i]}${cropped?'':'.'}</strong>${cropped?'':` ${esc(o)}`}</button>`).join('')}</div>`;}
     else if(c.type==='yesno'){body=`<div class="study-options study-options-two"><button type="button" class="study-option ${studyState.selected==='Да'?'selected':''}" data-study-option="Да"><strong>Да</strong></button><button type="button" class="study-option ${studyState.selected==='Не'?'selected':''}" data-study-option="Не"><strong>Не</strong></button></div>`;}
@@ -338,13 +368,13 @@
     else if(c.type==='match'){body=renderMatchBody(c);}
     else{body='<div class="open-question-note">Помисли за отговора си. Когато си готов, покажи решението и се самооцени.</div>';}
     const genericAnswer=studyState.revealed?`<div class="study-answer"><span class="study-answer-label">Правилен отговор</span><strong>${esc(correctText(c)||'—')}</strong>${c.e?`<p>${esc(c.e)}</p>`:''}</div><div class="study-rate"><button class="rate-no" type="button" data-study-rate="no">Не знаех</button><button class="rate-yes" type="button" data-study-rate="yes">Знаех</button></div>`:`<div class="study-reveal"><button class="primary-button" type="button" data-study-reveal>Покажи отговора</button></div>`;
-    const backLabel=studyState.mode==='review'?'← Преговор':'← Библиотека',deckContext=studyState.mode==='review'&&c._deckName?` · ${esc(c._deckName)}`:'';
+    const backLabel=studyState.mode==='review'?'← Преговор':'← Библиотека',deckContext=(studyState.mode==='review'||studyState.mode==='multi')&&c._deckName?` · ${esc(c._deckName)}`:'';
     const questionFront=hasQuestionCrop(c)?`<div class="study-question-crop"><img src="${c.crop}" alt="Оригинален въпрос ${esc(c.sourceQuestionNumber||c.number||studyState.index+1)}"><div class="study-question-crop-caption"><span>Оригинален въпрос от материала</span>${c.sourceImageName?`<small>${esc(c.sourceImageName)}</small>`:''}</div></div>`:`<div class="study-question">${esc(c.q||'')}</div>`;
     root.innerHTML=`<div class="study-top"><button class="study-back" type="button" data-study-return>${backLabel}</button><div class="study-progress-copy"><strong>${esc(deck.name)}</strong>${studyState.index+1} от ${cards.length}</div></div><div class="study-progress-line"><i style="width:${pct}%"></i></div><article class="study-card"><div class="study-meta-row"><div class="study-subject"><span class="subject-dot" style="--subject-color:${s.color}"></span>${esc(s.label)}${deckContext}</div><div class="study-type-badge"><span>Вид въпрос</span><strong>${esc(meta.label)}</strong></div></div><div class="study-type-help">${esc(meta.help)}</div>${questionFront}${body}${specialMatch?(studyState.revealed?genericAnswer:''):genericAnswer}</article>`;
   }
   function rateStudy(ok){
     state=loadState();const sessionCard=currentStudyCard();if(!sessionCard)return;let deck,c;
-    if(studyState.mode==='review'){deck=findDeck(sessionCard._deckId);c=deck?.cards?.find(x=>String(x.id)===String(sessionCard.id));}
+    if(studyState.mode==='review'||studyState.mode==='multi'){deck=findDeck(sessionCard._deckId);c=deck?.cards?.find(x=>String(x.id)===String(sessionCard.id));}
     else{deck=findDeck(studyState.deckId);c=deck?.cards?.[studyState.index];}
     if(!deck||!c)return;state.results.push({id:c.id,ok:!!ok,at:new Date().toISOString(),deckId:deck.id});state.mistakes=state.mistakes||{};state.mistakes[c.id]=ok?Math.max(0,Number(state.mistakes[c.id]||0)-1):Number(state.mistakes[c.id]||0)+1;deck.updatedAt=new Date().toISOString();if(ok)studyState.known++;else studyState.unknown++;studyState.index++;resetStudyCardState();saveState();renderStudy();
   }
@@ -674,6 +704,15 @@
   document.getElementById('generatedList').addEventListener('click',e=>{const btn=e.target.closest('[data-delete-card]');if(!btn)return;createState.generated.splice(Number(btn.dataset.deleteCard),1);renderGenerated();});
 
   document.getElementById('libraryCreate').addEventListener('click',()=>openCreate());
+  document.getElementById('multiDeckOpen').addEventListener('click',openMultiDeckPicker);
+  document.getElementById('multiDeckClose').addEventListener('click',closeMultiDeckPicker);
+  document.getElementById('multiDeckBackdrop').addEventListener('click',e=>{if(e.target===e.currentTarget)closeMultiDeckPicker();});
+  document.getElementById('multiDeckSearch').addEventListener('input',e=>{multiDeckState.query=e.target.value;renderMultiDeckPicker();});
+  document.getElementById('multiDeckFilters').addEventListener('click',e=>{const b=e.target.closest('[data-multi-subject]');if(!b)return;multiDeckState.subject=b.dataset.multiSubject;renderMultiDeckPicker();});
+  document.getElementById('multiDeckList').addEventListener('click',e=>{const b=e.target.closest('[data-multi-deck]');if(!b)return;const id=String(b.dataset.multiDeck);if(multiDeckState.selected.has(id))multiDeckState.selected.delete(id);else multiDeckState.selected.add(id);renderMultiDeckPicker();});
+  document.getElementById('multiDeckSelectAll').addEventListener('click',()=>{state=loadState();const all=(state.deckLibrary||[]).map(d=>String(d.id)),allSelected=all.length&&all.every(id=>multiDeckState.selected.has(id));multiDeckState.selected=allSelected?new Set():new Set(all);renderMultiDeckPicker();});
+  document.getElementById('multiDeckClear').addEventListener('click',()=>{multiDeckState.selected.clear();renderMultiDeckPicker();});
+  document.getElementById('multiDeckStart').addEventListener('click',startMultiDeckStudy);
   document.getElementById('librarySearch').addEventListener('input',e=>{libraryState.query=e.currentTarget.value;renderLibrary();});
   document.getElementById('librarySort').addEventListener('change',e=>{libraryState.sort=e.currentTarget.value;renderLibrary();});
   document.getElementById('libraryFilters').addEventListener('click',e=>{const b=e.target.closest('[data-library-subject]');if(!b)return;libraryState.subject=b.dataset.librarySubject;renderLibrary();});
@@ -718,4 +757,6 @@
   setView((location.hash||'#home').slice(1));
 })();
 
+
+  window.addEventListener('keydown',e=>{if(e.key==='Escape'&&!document.getElementById('multiDeckBackdrop')?.hidden)closeMultiDeckPicker();});
 if('serviceWorker' in navigator&&!window.ZNAYA_PREVIEW_MODE){window.addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js').catch(()=>{}));}
